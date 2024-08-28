@@ -2,19 +2,23 @@ package main
 
 import (
 	"VOL/handler"
-
+	"VOL/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
 
-	// ¶¨ÒåÂ·ÓÉºÍ´¦Àíº¯Êı
+	// ä¸­é—´ä»¶
+	router.Use(middleware.CORSMiddleware())
+
+	// å®šä¹‰è·¯ç”±å’Œå¤„ç†å‡½æ•°
 	router.POST("/k8s/command", handler.HandleK8sCommand)
 	router.GET("/k8s/node", handler.Handler_get_node)
 	router.GET("/k8s/vcjob/status", handler.HandleVcjobStatus)
-	router.GET("/k8s/pod_status", handler.HandlePodStatus) // ĞÂÔöÂ·ÓÉ
+	router.GET("/k8s/pod_status", handler.HandlePodStatus) // æ–°å¢è·¯ç”±
+	router.GET("/exec", handler.HandleCmd)
 
-	// Æô¶¯·şÎñÆ÷
+	// å¯åŠ¨æœåŠ¡å™¨
 	router.Run(":8081")
 }
