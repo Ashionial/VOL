@@ -2,6 +2,7 @@ package handler
 
 import (
 	"VOL/k8s"
+	"encoding/base64"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -38,17 +39,29 @@ func Handler_get_node(c *gin.Context) {
 		// 执行 Kubernetes 命令
 		output, err := k8s.ExecuteCommand_getnodes()
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "output": output})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":  err.Error(),
+				"output": base64.StdEncoding.EncodeToString([]byte(output)),
+			})
 			return
 		}
-		c.String(http.StatusOK, output)
+		c.JSON(http.StatusOK, gin.H{
+			"output": base64.StdEncoding.EncodeToString([]byte(output)),
+			"error":  "",
+		})
 	} else {
 		output, err := k8s.ExecuteCommand_getnode(username)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "output": output})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":  err.Error(),
+				"output": base64.StdEncoding.EncodeToString([]byte(output)),
+			})
 			return
 		}
-		c.String(http.StatusOK, output)
+		c.JSON(http.StatusOK, gin.H{
+			"output": base64.StdEncoding.EncodeToString([]byte(output)),
+			"error":  "",
+		})
 	}
 
 }

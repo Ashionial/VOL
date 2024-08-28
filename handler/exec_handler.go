@@ -9,11 +9,12 @@ import (
 )
 
 func HandleCmd(c *gin.Context) {
-	cmdStr := c.Query("cmd")
+	cmdStr := c.PostForm("cmd")
 
 	if !strings.HasPrefix(cmdStr, "kubectl") {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "kubectl command not found",
+			"cmd":   cmdStr,
 		})
 		return
 	}
@@ -21,17 +22,17 @@ func HandleCmd(c *gin.Context) {
 	req := strings.Split(cmdStr, " ")
 	cmd := exec.Command(req[0], req[1:]...)
 	output, err := cmd.CombinedOutput()
-	encoded_output := base64.StdEncoding.EncodeToString(output)
+	encodedOutput := base64.StdEncoding.EncodeToString(output)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":  err.Error(),
-			"output": encoded_output,
+			"output": encodedOutput,
 		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"error":  "",
-		"output": encoded_output,
+		"output": encodedOutput,
 	})
 }
