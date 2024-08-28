@@ -38,22 +38,44 @@ func ExecuteCommand_getnode(node_name string) (string, error) {
 	return string(output), nil
 }
 
-// 查询具体vcjob状态
-func GetVcjobStatus(name, namespace string) (string, error) {
-	cmd := exec.Command("kubectl", "get", "vcjob", name, "-n", namespace, "-o", "jsonpath={.status.conditions[0].type}")
+// 查询所有vcjob的状态
+func ExecuteCommand_getAllVCJobs(namespace string) (string, error) {
+	cmd := exec.Command("kubectl", "get", "vcjob", "-n", namespace, "-o", "wide")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", fmt.Errorf("failed to get vcjob status: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
+		return "", fmt.Errorf("failed to get all VCJobs: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
+	}
+	return string(output), nil
+}
+
+// 查询具体vcjob的状态
+func ExecuteCommand_getVCJob(jobName, namespace string) (string, error) {
+	cmd := exec.Command("kubectl", "get", "vcjob", jobName, "-n", namespace, "-o", "jsonpath={.status.conditions[0].type}")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("failed to get VCJob status: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
+	}
+	return string(output), nil
+}
+
+// 查询所有pod状态
+func ExecuteCommand_getAllPods(namespace string) (string, error) {
+	// 使用 kubectl 获取所有 Pod 的状态
+	cmd := exec.Command("kubectl", "get", "pods", "-n", namespace, "-o", "wide")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("failed to get all pods: %v, output: %s", err, string(output))
 	}
 	return string(output), nil
 }
 
 // 查询具体pod状态
-func GetPodStatus(name, namespace string) (string, error) {
-	cmd := exec.Command("kubectl", "get", "pod", name, "-n", namespace, "-o", "jsonpath={.status.phase}")
+func ExecuteCommand_getPod(podName, namespace string) (string, error) {
+	// 使用 kubectl 获取指定 Pod 的状态
+	cmd := exec.Command("kubectl", "get", "pod", podName, "-n", namespace, "-o", "jsonpath={.status.phase}")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", fmt.Errorf("failed to get pod status: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
+		return "", fmt.Errorf("failed to get pod status: %v, output: %s", err, string(output))
 	}
 	return string(output), nil
 }

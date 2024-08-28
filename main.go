@@ -3,6 +3,7 @@ package main
 import (
 	"VOL/handler"
 	"VOL/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,8 +17,8 @@ func main() {
 	router.POST("/exec", handler.HandleCmd)
 	router.POST("/k8s/command", handler.HandleK8sCommand)
 	router.GET("/k8s/node", handler.HandlerGetNode)
-	router.GET("/k8s/vcjob/status", handler.HandleVcjobStatus)
-	router.GET("/k8s/pod_status", handler.HandlePodStatus)
+	router.GET("/k8s/vcjob", handler.HandleGetVCJobStatus)
+	router.GET("/k8s/pod", handler.HandleGetPodStatus)
 
 	// 启动服务器
 	router.Run(":8081")
