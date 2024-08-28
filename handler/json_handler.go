@@ -66,13 +66,13 @@ func HandlerGetNode(c *gin.Context) {
 	}
 }
 
-func HandlerGetVCJobStatus(c *gin.Context) {
+func HandlerGetVCJob(c *gin.Context) {
 	jobName := c.DefaultQuery("jobName", "all")
 	namespace := c.DefaultQuery("namespace", "default")
 
 	if jobName == "all" {
 		// 查询所有vcjob的状态
-		output, err := k8s.ExecuteCommand_getAllVCJobs(namespace)
+		output, err := k8s.ExecuteCommand_getvcjobs(namespace)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":  err.Error(),
@@ -86,7 +86,7 @@ func HandlerGetVCJobStatus(c *gin.Context) {
 		})
 	} else {
 		// 查询指定vcjob的状态
-		output, err := k8s.ExecuteCommand_getVCJob(jobName, namespace)
+		output, err := k8s.ExecuteCommand_getvcjob(jobName, namespace)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":  err.Error(),
@@ -101,13 +101,13 @@ func HandlerGetVCJobStatus(c *gin.Context) {
 	}
 }
 
-func HandlerGetPodStatus(c *gin.Context) {
+func HandlerGetPod(c *gin.Context) {
 	podName := c.DefaultQuery("podName", "all")
 	namespace := c.DefaultQuery("namespace", "default")
 
 	if podName == "all" {
 		// 查询所有pod状态的命令
-		output, err := k8s.ExecuteCommand_getAllPods(namespace)
+		output, err := k8s.ExecuteCommand_getpods(namespace)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":  err.Error(),
@@ -121,7 +121,7 @@ func HandlerGetPodStatus(c *gin.Context) {
 		})
 	} else {
 		// 查询指定pod的状态
-		output, err := k8s.ExecuteCommand_getPod(podName, namespace)
+		output, err := k8s.ExecuteCommand_getpod(podName, namespace)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":  err.Error(),
