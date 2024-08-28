@@ -33,7 +33,7 @@ func HandleK8sCommand(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"output": output})
 }
 
-func Handler_get_node(c *gin.Context) {
+func HandlerGetNode(c *gin.Context) {
 	username := c.DefaultQuery("username", "all")
 	if username == "all" {
 		// 执行 Kubernetes 命令
@@ -63,5 +63,4 @@ func Handler_get_node(c *gin.Context) {
 			"error":  "",
 		})
 	}
-
 }

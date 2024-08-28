@@ -15,7 +15,7 @@ func main() {
 	// 定义路由和处理函数
 	router.POST("/exec", handler.HandleCmd)
 	router.POST("/k8s/command", handler.HandleK8sCommand)
-	router.GET("/k8s/node", handler.Handler_get_node)
+	router.GET("/k8s/node", handler.HandlerGetNode)
 	router.GET("/k8s/vcjob/status", handler.HandleVcjobStatus)
 	router.GET("/k8s/pod_status", handler.HandlePodStatus)
 
