@@ -9,11 +9,12 @@ import (
 func main() {
 	router := gin.Default()
 
-	// å®šä¹‰è·¯ç”±å’Œå¤„ç†å‡½æ•°
+	// ¶¨ÒåÂ·ÓÉºÍ´¦Àíº¯Êı
 	router.POST("/k8s/command", handler.HandleK8sCommand)
 	router.GET("/k8s/node", handler.Handler_get_node)
 	router.GET("/k8s/vcjob/status", handler.HandleVcjobStatus)
+	router.GET("/k8s/pod_status", handler.HandlePodStatus) // ĞÂÔöÂ·ÓÉ
 
-	// å¯åŠ¨æœåŠ¡å™¨
+	// Æô¶¯·şÎñÆ÷
 	router.Run(":8081")
 }

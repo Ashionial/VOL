@@ -47,3 +47,13 @@ func GetVcjobStatus(name, namespace string) (string, error) {
 	}
 	return string(output), nil
 }
+
+// 查询具体pod状态
+func GetPodStatus(name, namespace string) (string, error) {
+	cmd := exec.Command("kubectl", "get", "pod", name, "-n", namespace, "-o", "jsonpath={.status.phase}")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("failed to get pod status: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
+	}
+	return string(output), nil
+}
