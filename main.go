@@ -14,6 +14,7 @@ func main() {
 	router.Use(middleware.CORSMiddleware())
 
 	// 定义路由和处理函数
+	router.POST("/docker", handler.DockerHandler)
 	router.POST("/exec", handler.CmdHandler)
 	router.POST("/k8s/command", handler.K8sCommandHandler)
 	router.GET("/k8s/node", handler.GetNodeHandler)
