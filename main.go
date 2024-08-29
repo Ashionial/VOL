@@ -19,7 +19,7 @@ func main() {
 	router.GET("/k8s/node", handler.GetNodeHandler)
 	router.GET("/k8s/vcjob", handler.GetVCJobHandler)
 	router.GET("/k8s/pod", handler.GetPodHandler)
-
+	router.GET("/k8s/log", handler.LogHandler)
 	// 启动服务器
 	router.Run(":8081")
 }
