@@ -17,7 +17,7 @@ func ExecuteCommand(action, resource, name, namespace string) (string, error) {
 }
 
 // 查询所有节点状态
-func ExecuteCommand_getnodes() (string, error) {
+func ExecuteCommandGetNodes() (string, error) {
 	// 示例：使用 kubectl 执行命令
 	cmd := exec.Command("kubectl", "get", "node")
 	output, err := cmd.CombinedOutput()
@@ -28,7 +28,7 @@ func ExecuteCommand_getnodes() (string, error) {
 }
 
 // 查询具体节点状态
-func ExecuteCommand_getnode(node_name string) (string, error) {
+func ExecuteCommandGetNode(node_name string) (string, error) {
 	// 示例：使用 kubectl 执行命令
 	cmd := exec.Command("kubectl", "discribe", "node", node_name)
 	output, err := cmd.CombinedOutput()
@@ -39,7 +39,7 @@ func ExecuteCommand_getnode(node_name string) (string, error) {
 }
 
 // 查询所有vcjob的状态
-func ExecuteCommand_getvcjobs(namespace string) (string, error) {
+func ExecuteCommandGetvcjobs(namespace string) (string, error) {
 	cmd := exec.Command("kubectl", "get", "vcjob", "-n", namespace, "-o", "wide")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -49,7 +49,7 @@ func ExecuteCommand_getvcjobs(namespace string) (string, error) {
 }
 
 // 查询具体vcjob的状态
-func ExecuteCommand_getvcjob(jobName, namespace string) (string, error) {
+func ExecuteCommandGetvcjob(jobName, namespace string) (string, error) {
 	cmd := exec.Command("kubectl", "get", "vcjob", jobName, "-n", namespace, "-o", "jsonpath={.status.conditions[0].type}")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -59,7 +59,7 @@ func ExecuteCommand_getvcjob(jobName, namespace string) (string, error) {
 }
 
 // 查询所有pod状态
-func ExecuteCommand_getpods(namespace string) (string, error) {
+func ExecuteCommandGetpods(namespace string) (string, error) {
 	// 使用 kubectl 获取所有 Pod 的状态
 	cmd := exec.Command("kubectl", "get", "pods", "-n", namespace, "-o", "wide")
 	output, err := cmd.CombinedOutput()
@@ -70,7 +70,7 @@ func ExecuteCommand_getpods(namespace string) (string, error) {
 }
 
 // 查询具体pod状态
-func ExecuteCommand_getpod(podName, namespace string) (string, error) {
+func ExecuteCommandGetpod(podName, namespace string) (string, error) {
 	// 使用 kubectl 获取指定 Pod 的状态
 	cmd := exec.Command("kubectl", "get", "pod", podName, "-n", namespace, "-o", "jsonpath={.status.phase}")
 	output, err := cmd.CombinedOutput()

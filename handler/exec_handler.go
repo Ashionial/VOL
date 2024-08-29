@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func HandleCmd(c *gin.Context) {
+func CmdHandler(c *gin.Context) {
 	cmdStr := c.PostForm("cmd")
 
 	if !strings.HasPrefix(cmdStr, "kubectl") {
