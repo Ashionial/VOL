@@ -64,7 +64,7 @@ func GetAuth() AuthConfig {
 		panic(err)
 	}
 
-	auth, exists := dockerConfig.Auths["http://index.docker.io/v1/"]
+	auth, exists := dockerConfig.Auths["https://index.docker.io/v1/"]
 	if !exists {
 		panic("No auth config found")
 	}
