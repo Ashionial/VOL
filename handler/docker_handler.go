@@ -10,7 +10,7 @@ import (
 // 如果一定要使用json格式，可以考虑文件转化为Base64编码嵌入json中，但是json文件会变得很大
 // 也可以直接传文件
 func DockerHandler(c *gin.Context) {
-	imageName := c.Param("imageName")
+	imageName := c.PostForm("imageName")
 	dockerfileContent := c.PostForm("dockerfile")
 
 	imageName, err := docker.BuildDockerImage(imageName, dockerfileContent)
@@ -18,6 +18,7 @@ func DockerHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	err = docker.PushDockerImage(imageName)
@@ -25,6 +26,7 @@ func DockerHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

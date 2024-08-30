@@ -21,7 +21,7 @@ func BuildDockerImage(imageName string, dockerfile string) (string, error) {
 
 	buildOptions := types.ImageBuildOptions{
 		Context:    tarBag,
-		Dockerfile: "dockerfile",
+		Dockerfile: "Dockerfile",
 		Tags:       []string{imageName},
 		Remove:     true,
 	}
