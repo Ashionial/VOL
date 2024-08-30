@@ -7,13 +7,11 @@ import (
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 	"os"
+	"strings"
 )
 
-// 这个是从系统中读取，也可以直接填入字符串
-var authConfig = AuthConfig{
-	Username: os.Getenv("DOCKER_USERNAME"),
-	Password: os.Getenv("DOCKER_PASSWORD"),
-}
+// 从系统中读取
+var authConfig = GetAuth()
 
 func PushDockerImage(imageName string) error {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -36,6 +34,65 @@ func PushDockerImage(imageName string) error {
 	}
 
 	return nil
+}
+
+// 从系统中获取账号密码
+func GetAuth() AuthConfig {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	configPath := homeDir + "/.docker/config.json"
+	file, err := os.Open(configPath)
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(err) // 处理文件关闭错误
+		}
+	}()
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		panic(err)
+	}
+
+	var dockerConfig LocalDockerConfig
+	err = json.Unmarshal(data, &dockerConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	auth, exists := dockerConfig.Auths["http://index.docker.io/v1/"]
+	if !exists {
+		panic("No auth config found")
+	}
+
+	decodedAuth, err := base64.StdEncoding.DecodeString(auth.Auth)
+	if err != nil {
+		panic(err)
+	}
+
+	authParts := strings.Split(string(decodedAuth), ":")
+	if len(authParts) != 2 {
+		panic("Invalid auth config format")
+	}
+
+	authConfig := AuthConfig{
+		Username: authParts[0],
+		Password: authParts[1],
+	}
+
+	return authConfig
+}
+
+// 获取json文件结构的辅助结构体
+type LocalDockerConfig struct {
+	Auths map[string]Authenticate `json:"auths"`
+}
+type Authenticate struct {
+	Auth string `json:"auth"`
 }
 
 // types中找不到这个结构体，我直接复制了一份下来
