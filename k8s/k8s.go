@@ -81,7 +81,7 @@ func ExecuteCommandGetpod(podName, namespace string) (string, error) {
 }
 
 func ExecuteCommandLog(podName, namespace string) (string, error) {
-	cmd := exec.Command("kubectl", "logs", podName, "--previous", "-n", namespace)
+	cmd := exec.Command("kubectl", "logs", podName, "-n", namespace)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("failed to execute command: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
