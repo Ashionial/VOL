@@ -30,7 +30,7 @@ func ExecuteCommandGetNodes() (string, error) {
 // 查询具体节点状态
 func ExecuteCommandGetNode(node_name string) (string, error) {
 	// 示例：使用 kubectl 执行命令
-	cmd := exec.Command("kubectl", "discribe", "node", node_name)
+	cmd := exec.Command("kubectl", "describe", "node", node_name)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("failed to execute command: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
@@ -80,8 +80,8 @@ func ExecuteCommandGetpod(podName, namespace string) (string, error) {
 	return string(output), nil
 }
 
-func ExecuteCommandLog(logName string) (string, error) {
-	cmd := exec.Command("kubectl", "logs", logName)
+func ExecuteCommandLog(podName string, namespace string) (string, error) {
+	cmd := exec.Command("kubectl", "logs", podName, "--previous", "-n", namespace)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", fmt.Errorf("failed to execute command: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
