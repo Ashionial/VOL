@@ -9,9 +9,9 @@ import (
 
 func LogHandler(c *gin.Context) {
 	//查询正在进行的pob的log
-	podname := c.Query("podName")
+	podName := c.Query("podName")
 	namespace := c.Query("namespace")
-	output, err := k8s.ExecuteCommandLog(podname, namespace)
+	output, err := k8s.ExecuteCommandLog(podName, namespace)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":  err.Error(),

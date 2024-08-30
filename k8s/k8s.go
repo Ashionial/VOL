@@ -80,7 +80,7 @@ func ExecuteCommandGetpod(podName, namespace string) (string, error) {
 	return string(output), nil
 }
 
-func ExecuteCommandLog(podName string, namespace string) (string, error) {
+func ExecuteCommandLog(podName, namespace string) (string, error) {
 	cmd := exec.Command("kubectl", "logs", podName, "--previous", "-n", namespace)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
