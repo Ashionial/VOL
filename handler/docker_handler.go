@@ -4,6 +4,7 @@ import (
 	"VOL/docker"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 // 因为只有dockerfile所以只能使用官方库中的内容，还要进一步改进以支持文件的上传
@@ -14,6 +15,7 @@ func DockerHandler(c *gin.Context) {
 	dockerfileContent := c.PostForm("dockerfile")
 
 	imageName, err := docker.BuildDockerImage(imageName, dockerfileContent)
+	imageName = "139.9.4.123:5000/yjhknows/" + strings.ToLower(imageName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -21,10 +23,11 @@ func DockerHandler(c *gin.Context) {
 		return
 	}
 
-	err = docker.PushDockerImage(imageName)
+	result, err := docker.PushDockerImage(imageName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+			"message": result,
+			"error":   err.Error(),
 		})
 		return
 	}

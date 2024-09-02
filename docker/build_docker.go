@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"os/exec"
 )
 
 func BuildDockerImage(imageName string, dockerfile string) (string, error) {
@@ -28,7 +29,7 @@ func BuildDockerImage(imageName string, dockerfile string) (string, error) {
 
 	response, err := cli.ImageBuild(ctx, tarBag, buildOptions)
 	if err != nil {
-		return "", err
+		return "Failed to build", err
 	}
 	defer response.Body.Close()
 
@@ -52,4 +53,23 @@ func CreateTarArchive(dockerfile []byte) (*bytes.Reader, error) {
 		return nil, err
 	}
 	return bytes.NewReader(buf.Bytes()), nil
+}
+
+func BuildImageByFile(imageName string, contextPath string) (string, error) {
+	buildCmd := exec.Command("docker", "build", "-t", imageName, contextPath)
+	buildOutput, err := buildCmd.CombinedOutput()
+	if err != nil {
+		return string(buildOutput), err
+		//return "", err
+	}
+
+	// 执行docker push命令
+	result, err := PushDockerImage(imageName)
+	if err != nil {
+		return string(buildOutput) + "\n" + result, err
+		//return "", err
+	}
+
+	// 返回成功信息
+	return string(buildOutput) + "\n" + result, nil
 }

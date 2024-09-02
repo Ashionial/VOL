@@ -1,6 +1,7 @@
 package main
 
 import (
+	"VOL/docker"
 	"VOL/handler"
 	"VOL/middleware"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func main() {
+	docker.Init()
 	router := gin.Default()
 
 	// 中间件
