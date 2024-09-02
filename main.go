@@ -17,6 +17,7 @@ func main() {
 	router.POST("/docker", handler.DockerHandler)
 	router.POST("/exec", handler.CmdHandler)
 	router.POST("/manual", handler.ManualHandler)
+	router.POST("/yaml", handler.GetYamlHandler)
 	router.POST("/k8s/command", handler.K8sCommandHandler)
 	router.GET("/k8s/node", handler.GetNodeHandler)
 	router.GET("/k8s/vcjob", handler.GetVCJobHandler)
