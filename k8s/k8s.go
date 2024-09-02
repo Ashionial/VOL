@@ -88,3 +88,12 @@ func ExecuteCommandLog(podName, namespace string) (string, error) {
 	}
 	return string(output), nil
 }
+
+func ExecuteCommandYaml(yamlName string) (string, error) {
+	cmd := exec.Command("kubectl", "create", "-f", yamlName)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("failed to execute command: %v, output: %s", err, string(output)+" "+cmd.String()+"\n")
+	}
+	return string(output), nil
+}
