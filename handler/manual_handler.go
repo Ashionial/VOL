@@ -1,10 +1,12 @@
 package handler
 
 import (
-	"encoding/base64"
+	"VOL/docker"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"os/exec"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -12,16 +14,20 @@ func ManualHandler(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"error":   err.Error(),
+			"message": "Failed to parse multipart form",
 		})
 		return
 	}
 	if form == nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "form is nil",
+			"error":   "form is nil",
+			"message": "Failed to parse multipart form",
 		})
 		return
 	}
+
+	path := "./file" + strconv.Itoa(int(docker.GetCount())) + "/"
 
 	files_names := make([]string, 0)
 	for _, file := range form.File["file"] {
@@ -31,43 +37,49 @@ func ManualHandler(c *gin.Context) {
 			})
 			return
 		}
-		c.SaveUploadedFile(file, "./file/"+file.Filename)
+		c.SaveUploadedFile(file, path+file.Filename)
 		files_names = append(files_names, file.Filename)
 	}
 
-	for _, cmd := range form.Value["cmd"] {
-		req := strings.Split(cmd, " ")
-		if len(req) < 2 {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "invalid cmd",
-			})
-			return
-		}
+	dockerfileContent := fmt.Sprintf(`
+	FROM python:3.9-slim
+	
+	WORKDIR /app
+
+	COPY . /app
+
+	# RUN pip install --no-cache-dir -r requirements.txt
+	`)
+
+	command := c.PostForm("cmd")
+	commands := strings.Split(command, " ")
+	dockerfileContent += fmt.Sprintf(`CMD ["%s"`, commands[0])
+	for _, cmd := range commands[1:] {
+		dockerfileContent += fmt.Sprintf(`, "%s"`, cmd)
 	}
-	outputs := ""
-	for _, cmd := range form.Value["cmd"] {
-		req := strings.Split(cmd, " ")
-		for idx, request := range req {
-			for _, name := range files_names {
-				if request == name {
-					req[idx] = "./file/" + req[idx]
-					break
-				}
-			}
-		}
-		command := exec.Command(req[0], req[1:]...)
-		output, err := command.CombinedOutput()
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-		}
-		outputs += "\n" + string(output)
+	dockerfileContent += "]\n"
+
+	err = os.WriteFile(path+"Dockerfile", []byte(dockerfileContent), os.ModePerm)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   err.Error(),
+			"message": "Failed to create docker file",
+		})
+		return
 	}
-	encoded_output := base64.StdEncoding.EncodeToString([]byte(outputs))
+
+	imageName := c.PostForm("imageName")
+	imageName = "139.9.4.123:5000/yjhknows/" + strings.ToLower(imageName)
+	buildOutput, err := docker.BuildImageByFile(imageName, path)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"error":  "",
-		"output": encoded_output,
+		"error":       "",
+		"buildOutput": buildOutput,
 	})
 }
