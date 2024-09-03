@@ -23,8 +23,9 @@ func GetYamlHandler(c *gin.Context) {
 	}
 
 	file_name := file.Filename
+	file_name = "./file/" + file_name
 
-	c.SaveUploadedFile(file, "./file/"+file.Filename)
+	c.SaveUploadedFile(file, file_name)
 
 	output, err := k8s.ExecuteCommandYaml(file_name)
 
